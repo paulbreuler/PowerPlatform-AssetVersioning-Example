@@ -16,6 +16,10 @@ jobs:
       url: ${{env.ENVIRONMENT_URL}}
 
     steps: 
+    
+    - name: Checkout
+      uses: actions/checkout@v3.3.0
+    
     - name: export ${{ github.event.inputs.solution_name }} solution action
       uses: microsoft/powerplatform-actions/export-solution@latest
       with:
