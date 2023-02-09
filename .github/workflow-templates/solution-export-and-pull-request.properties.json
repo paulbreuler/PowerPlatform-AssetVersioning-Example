@@ -1,0 +1,10 @@
+{
+    "name": "Export Power Platform solution, branch, and pull request workflow",
+    "description": "Export Power Platform solution, branch, and pull request starter workflow",
+    "iconName": "blank",
+    "categories": [
+        "continuous-integration",
+        "Automation"
+    ],
+    "labels": ["preview"]
+}
