@@ -27,6 +27,6 @@ jobs:
         solution-output-file: ${{ github.event.inputs.solution_exported_folder}}/${{ github.event.inputs.solution_name }}.zip
 
     - name: unpack ${{ github.event.inputs.solution_name }} solution
-      uses: paulbreuler/componsite-actions/unpack-solution.yml@main
+      uses: paulbreuler/PowerPlatform-CLI-workflow-templates/componsite-actions/unpack-solution.yml@main
       with:
         solution_name: ${{ inputs.solution_source_folder}}/${{ inputs.solution_name }}
