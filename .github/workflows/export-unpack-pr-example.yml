@@ -1,4 +1,4 @@
-name: Release action
+name: Export, unpack solution, and create PR 
 
 on:
   workflow_dispatch:
@@ -16,6 +16,10 @@ jobs:
       url: ${{env.ENVIRONMENT_URL}}
 
     steps: 
+    - uses: actions/checkout@latest
+      with:
+        lfs: true
+
     - name: export ${{ github.event.inputs.solution_name }} solution action
       uses: microsoft/powerplatform-actions/export-solution@latest
       with:

@@ -21,12 +21,8 @@
   runs:
     using: "composite"
     steps:
-    - uses: actions/checkout@v2
-      with:
-        lfs: true
-
     - name: unpack-solution action
-      uses: microsoft/powerplatform-actions/unpack-solution.yml@main
+      uses: microsoft/powerplatform-actions/unpack-solution
       with:
         solution-file: ${{ github.event.inputs.solution_exported_folder}}/${{ github.event.inputs.solution_name }}.zip
         solution-folder: ${{ github.event.inputs.solution_folder}}/${{ github.event.inputs.solution_name }}
