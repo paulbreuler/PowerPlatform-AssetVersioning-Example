@@ -1,0 +1,17 @@
+name: Release action
+
+on:
+  release:
+      types: [created]        
+
+jobs:
+  Release-solution-ALMLab:
+    uses: ./reusable-workflows/release-solution-with-inputs.yml@latest
+    with:
+      solution_name: Examplesolution # Change me
+      BUILD_ENVIRONMENT_URL: ${{env.BUILD_ENVIRONMENT_URL}} # Could be explicit value
+      PRODUCTION_ENVIRONMENT_URL: ${{env.TARGET_ENVIRONMENT_URL}} # Could be explicit value
+      CLIENT_ID: ${{env.CLIENT_ID}} # Could be explicit value
+      TENANT_ID: ${{env.TENANT_ID}} # Could be explicit value
+    secrets:
+      envSecret: ${{ secrets.PowerPlatformSPN }}
