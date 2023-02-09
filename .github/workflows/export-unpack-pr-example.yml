@@ -33,7 +33,6 @@ jobs:
         echo "CLIENT_ID variable : ${{ vars.CLIENT_ID }}"
         echo "TENANT_ID variable : ${{ vars.TENANT_ID }}"
 
-
     - name: Exporting ${{ inputs.solution_name }} solution
       uses: microsoft/powerplatform-actions/export-solution@latest
       with:
@@ -52,7 +51,7 @@ jobs:
         solution_export_folder: ${{ env.SOLUTION_EXPORT_FOLDER }}
 
     - name: Creating a branch with a new commit for the ${{ inputs.solution_name }} solution
-      uses: paulbreuler/PowerPlatform-CLI-workflow-templates/componsite-actions/create-solution-pull-request@main
+      uses: paulbreuler/PowerPlatform-CLI-workflow-templates/componsite-actions/create-solution-branch@main
       with:
         unpacked_solution_path: ${{ steps.unpack_solution.outputs.unpacked_solution_path }}
         solution_target_folder: solutions/

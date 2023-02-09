@@ -18,7 +18,7 @@ outputs:
   unpacked_solution_path: 
     description: 'The staging directory for the unpacked solution prior to check-in *do not change*'
     value: ${{ inputs.solution_folder}}/${{ inputs.solution_name }}
-
+    
 runs:
   using: "composite"
   steps:
@@ -26,6 +26,6 @@ runs:
     uses: microsoft/powerplatform-actions/unpack-solution@latest
     with:
       solution-file: ${{ inputs.solution_export_folder}}/${{ inputs.solution_name }}.zip
-      solution-folder: ${{ inputs.solution_folder}}/${{ inputs.solution_name }}
+      solution-folder: ${{ inputs.solution_folder }}/${{ inputs.solution_name }}/src
       solution-type: 'Unmanaged'
       overwrite-files: true

@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<EntityRelationships xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <EntityRelationship Name="business_unit_pbr_exampletable" />
-  <EntityRelationship Name="lk_pbr_exampletable_createdby" />
-  <EntityRelationship Name="lk_pbr_exampletable_modifiedby" />
-  <EntityRelationship Name="owner_pbr_exampletable" />
-  <EntityRelationship Name="team_pbr_exampletable" />
-  <EntityRelationship Name="user_pbr_exampletable" />
-</EntityRelationships>

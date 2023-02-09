@@ -16,7 +16,7 @@ inputs:
   solution_release_folder:
     description: 'folder where the released binaries are going to be hosted *do not change*'
     default: out/release
-  production-environment-url: 
+  production_environment_url: 
     description: 'Production environment url.'
     required: true
   client_id: 
@@ -33,6 +33,13 @@ runs:
   using: "composite"
 
   steps:
+
+  - name: Update solution version
+    uses: microsoft/powerplatform-actions/update-solution-version@latest
+    working-directory: ${{ inputs.solution_source_folder}}/${{ inputs.solution_name }}/src
+    with: 
+      strategy: solution
+
   - name: Pack solution
     uses: microsoft/powerplatform-actions/pack-solution@latest
     with:
@@ -53,21 +60,10 @@ runs:
       type: Sandbox
       region: unitedstates
 
-  - name: Test assign-user action with application user
-    uses: ./assign-user
-    with:
-      app-id: ${{ inputs.client_id }}
-      client-secret: ${{ inputs.client_secret }}
-      tenant-id: ${{ inputs.tenant_id }}
-      environment: ${{ steps.create-environment.outputs.environment-url }}
-      user: 82e66a08-8bf9-42bf-883a-7e2d17c7cede
-      role: "System Customizer"
-      application-user: true
-
   - name: Import solution as unmanaged to build env
     uses: microsoft/powerplatform-actions/import-solution@latest
     with:
-      environment-url: ${{ steps.create-environment.outputs.environment-url }}
+      environment-url: ${{ steps.create_environment.outputs.environment-url }}
       app-id: ${{inputs.client_id}}
       client-secret: ${{ inputs.client_secret }}
       tenant-id: ${{inputs.tenant_id}}
@@ -78,13 +74,22 @@ runs:
   - name: Export solution as managed
     uses: microsoft/powerplatform-actions/export-solution@latest
     with:
-      environment-url: ${{ inputs.production-environment-url }}
+      environment-url: ${{ steps.create-environment.outputs.environment-url }}
       app-id: ${{inputs.client_id}}
       client-secret: ${{ inputs.client_secret }} 
       tenant-id: ${{inputs.tenant_id}}
       solution-name: ${{ inputs.solution_name }}
       managed: true
       solution-output-file: ${{ inputs.solution_shipping_folder}}/${{ inputs.solution_name }}.zip
+
+  - name: Delete the just-in-time build environment
+    if: always()
+    uses: microsoft/powerplatform-actions/delete-environment@latest
+    with:
+      environment-url: ${{ steps.create-environment.outputs.environment-url }}
+      app-id: ${{inputs.client_id}}
+      client-secret: ${{ inputs.client_secret }} 
+      tenant-id: ${{inputs.tenant_id}}
 
   - name: Upload the ready to ship solution to GH artifact store
     uses: actions/upload-artifact@v2
