@@ -54,7 +54,7 @@ runs:
       region: unitedstates
 
   - name: Test assign-user action with application user
-    uses: ./assign-user
+    uses: microsoft/powerplatform-actions/assign-user@latest
     with:
       app-id: ${{ inputs.client_id }}
       client-secret: ${{ inputs.client_secret }}
