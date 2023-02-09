@@ -5,13 +5,24 @@ on:
       types: [created]        
 
 jobs:
-  Release-solution-ALMLab:
-    uses: ./reusable-workflows/release-solution-with-inputs.yml@main
-    with:
-      solution_name: Examplesolution # Change me
-      BUILD_ENVIRONMENT_URL: ${{env.BUILD_ENVIRONMENT_URL}} # Could be explicit value
-      PRODUCTION_ENVIRONMENT_URL: ${{env.TARGET_ENVIRONMENT_URL}} # Could be explicit value
-      CLIENT_ID: ${{env.CLIENT_ID}} # Could be explicit value
-      TENANT_ID: ${{env.TENANT_ID}} # Could be explicit value
-    secrets:
-      envSecret: ${{ secrets.PowerPlatformSPN }}
+  Release-Examplesolution-Solution:
+    runs-on: windows-latest
+    
+    environment: 
+        name: production
+        url: ${{vars.ENVIRONMENT_URL}}
+
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@v3.3.0
+      with:
+        lfs: true
+
+    - name: Unamanged to managed solution build
+      uses: paulbreuler/PowerPlatform-CLI-workflow-templates/componsite-actions/unmanaged-to-managed-build@main
+      with:
+        solution_name: Examplesolution # Change me
+        production_environment_url: ${{vars.ENVIRONMENT_URL}} # Could be explicit value
+        client_id: ${{vars.CLIENT_ID}} # Could be explicit value
+        tenant_id: ${{vars.TENANT_ID}} # Could be explicit value
+        client_secret: ${{ secrets.CLIENT_SECRET }}
