@@ -3,6 +3,8 @@
       description: 'The name of the solution to worked on from Power Platform'
       required: true
       default: Examplesolution
+    github_token:
+      description: 'A valid Github token for create a pull request'
 
       #Once set to you prefered layout avoid changing these values
     solution_folder:
@@ -18,9 +20,9 @@
     using: "composite"
     steps:
     - name: branch-solution, prepare it for a PullRequest
-      uses: microsoft/powerplatform-actions/branch-solution
+      uses: microsoft/powerplatform-actions/branch-solution@latest
       with:
-        solution-folder: ${{ github.event.inputs.solution_folder}}/${{ github.event.inputs.solution_name }}
-        solution-target-folder: ${{ github.event.inputs.solution_target_folder}}/${{ github.event.inputs.solution_name }}
+        solution-folder: ${{ inputs.solution_folder}}/${{inputs.solution_name }}
+        solution-target-folder: ${{ inputs.solution_target_folder}}/${{ inputs.solution_name }}
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         allow-empty-commit: true

@@ -6,7 +6,7 @@ on:
 
 jobs:
   Release-solution-ALMLab:
-    uses: ./reusable-workflows/release-solution-with-inputs.yml@latest
+    uses: ./reusable-workflows/release-solution-with-inputs.yml@main
     with:
       solution_name: Examplesolution # Change me
       BUILD_ENVIRONMENT_URL: ${{env.BUILD_ENVIRONMENT_URL}} # Could be explicit value
