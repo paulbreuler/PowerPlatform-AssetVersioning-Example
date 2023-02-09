@@ -7,10 +7,9 @@
       description: 'A valid Github token for create a pull request'
 
       #Once set to you prefered layout avoid changing these values
-    solution_folder:
-      description: 'The staging directory for the unpacked solution prior to check-in *do not change*'
+    unpacked_solution_path:
+      description: 'The path to the unpacked solution'
       required: true
-      default: out/solutions/
     solution_target_folder: 
       description: 'The name of the directory to be used or created when the solution is checked in *do not change*'
       required: true
@@ -19,10 +18,10 @@
   runs:
     using: "composite"
     steps:
-    - name: branch-solution, prepare it for a PullRequest
+    - name: Creating a branch for the ${{ inputs.solution_name }} solution
       uses: microsoft/powerplatform-actions/branch-solution@latest
       with:
-        solution-folder: ${{ inputs.solution_folder}}/${{inputs.solution_name }}
+        solution-folder: ${{ inputs.unpacked_solution_path}}
         solution-target-folder: ${{ inputs.solution_target_folder}}/${{ inputs.solution_name }}
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token: ${{ inputs.github_token }}
         allow-empty-commit: true

@@ -7,14 +7,14 @@ on:
         description: 'The solution name.'
         type: string
         default: Examplesolution     
-      solution_exported_folder:
-        description: 'The folder name for staging the exported solution *do not change*'
-        required: true
-        default: out/exported/
+
+env:
+  SOLUTION_EXPORT_FOLDER: out/exported/
+
 
 jobs:
   export-example-solution:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment: 
       name: development
       url: ${{vars.ENVIRONMENT_URL}}
@@ -28,13 +28,13 @@ jobs:
     - name: Use variables
       run: |
         echo "solution_name input: ${{ inputs.solution_name }}"
-        echo "solution_exported_folder input: ${{ inputs.solution_exported_folder }}"
+        echo "SOLUTION_EXPORT_FOLDER environemnt variable: ${{ env.SOLUTION_EXPORT_FOLDER }}"
         echo "ENVIRONMENT_URL variable : ${{ vars.ENVIRONMENT_URL }}"
         echo "CLIENT_ID variable : ${{ vars.CLIENT_ID }}"
         echo "TENANT_ID variable : ${{ vars.TENANT_ID }}"
 
 
-    - name: export ${{ inputs.solution_name }} solution action
+    - name: Exporting ${{ inputs.solution_name }} solution
       uses: microsoft/powerplatform-actions/export-solution@latest
       with:
         environment-url: ${{vars.ENVIRONMENT_URL}}
@@ -42,10 +42,18 @@ jobs:
         client-secret: ${{ secrets.CLIENT_SECRET }}
         tenant-id: ${{vars.TENANT_ID}}
         solution-name: ${{ inputs.solution_name }}
-        solution-output-file: ${{ inputs.solution_exported_folder}}/${{ inputs.solution_name }}.zip
+        solution-output-file: ${{ env.SOLUTION_EXPORT_FOLDER }}/${{ inputs.solution_name }}.zip
 
-    - name: unpack ${{ inputs.solution_name }} solution
+    - name: Unpacking ${{ inputs.solution_name }} solution
       uses: paulbreuler/PowerPlatform-CLI-workflow-templates/componsite-actions/unpack-solution@main
+      id: unpack_solution
       with:
         solution_name: ${{ inputs.solution_source_folder}}/${{ inputs.solution_name }}
-        solution_exported_folder: ${{ inputs.solution_exported_folder}}
+        solution_export_folder: ${{ env.SOLUTION_EXPORT_FOLDER }}
+
+    - name: Creating a branch with a new commit for the ${{ inputs.solution_name }} solution
+      uses: paulbreuler/PowerPlatform-CLI-workflow-templates/componsite-actions/create-solution-pull-request@main
+      with:
+        unpacked_solution_path: ${{ steps.unpack_solution.outputs.unpacked_solution_path }}
+        solution_target_folder: solutions/
+        github_token: ${{ secrets.GH_PAT_TOKEN }}

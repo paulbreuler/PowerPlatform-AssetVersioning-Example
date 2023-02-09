@@ -1,26 +1,31 @@
-  inputs: 
-    solution_name:
-      description: 'The name of the solution to worked on from Power Platform'
-      required: true
-      default: Examplesolution
+inputs: 
+  solution_name:
+    description: 'The name of the solution to worked on from Power Platform'
+    required: true
+    default: Examplesolution
 
-      #Once set to you prefered layout avoid changing these values
-    solution_exported_folder:
-      description: 'The folder name for staging the exported solution *do not change*'
-      required: true
-      default: out/exported/
-    solution_folder:
-      description: 'The staging directory for the unpacked solution prior to check-in *do not change*'
-      required: true
-      default: out/solutions/
+    #Once set to you prefered layout avoid changing these values
+  solution_export_folder:
+    description: 'The folder name for staging the exported solution *do not change*'
+    required: true
+    default: out/exported/
+  solution_folder:
+    description: 'The staging directory for the unpacked solution prior to check-in *do not change*'
+    required: true
+    default: out/solutions/
 
-  runs:
-    using: "composite"
-    steps:
-    - name: unpack-solution action
-      uses: microsoft/powerplatform-actions/unpack-solution@latest
-      with:
-        solution-file: ${{ inputs.solution_exported_folder}}/${{ inputs.solution_name }}.zip
-        solution-folder: ${{ inputs.solution_folder}}/${{ inputs.solution_name }}
-        solution-type: 'Unmanaged'
-        overwrite-files: true
+outputs:
+  unpacked_solution_path: 
+    description: 'The staging directory for the unpacked solution prior to check-in *do not change*'
+    value: ${{ inputs.solution_folder}}/${{ inputs.solution_name }}
+
+runs:
+  using: "composite"
+  steps:
+  - name: unpack-solution action
+    uses: microsoft/powerplatform-actions/unpack-solution@latest
+    with:
+      solution-file: ${{ inputs.solution_export_folder}}/${{ inputs.solution_name }}.zip
+      solution-folder: ${{ inputs.solution_folder}}/${{ inputs.solution_name }}
+      solution-type: 'Unmanaged'
+      overwrite-files: true
