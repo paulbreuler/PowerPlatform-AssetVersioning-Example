@@ -1,0 +1,93 @@
+inputs: 
+  #Values are set by the caller
+  #caller sample: release-action-call.ymnl
+  solution_name:
+    required: true
+    description: 'The solution name.'     
+  solution_shipping_folder:
+    description: 'folder name for staging the exported solution *do not change*'        
+    default: out/ship/
+  solution_outbound_folder:
+    description: 'staging the unpacked solution folder before check-in *do not change*'
+    default: out/solutions/
+  solution_source_folder: 
+    description: 'folder name to be created and checked in *do not change*'
+    default: solutions/
+  solution_release_folder:
+    description: 'folder where the released binaries are going to be hosted *do not change*'
+    default: out/release
+  production-environment-url: 
+    description: 'Production environment url.'
+    required: true
+  client_id: 
+    description: 'The client id'
+    required: true
+  tenant_id: 
+    description: 'The tenant id'
+    required: true
+  client_secret:
+    description: 'The secret value for authentication using SPN'
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+  - name: Pack solution
+    uses: microsoft/powerplatform-actions/pack-solution@latest
+    with:
+      solution-folder: ${{ inputs.solution_source_folder}}/${{ inputs.solution_name }}
+      solution-file: ${{ inputs.solution_outbound_folder}}/${{ inputs.solution_name }}.zip
+      solution-type: Unmanaged
+
+  - name: Create build environment
+    id: create_environment
+    uses: microsoft/powerplatform-actions/create-environment@latest
+    env:
+        BUILD_ENV_NAME: ${{ format('build-on-{0}-pr-{1}', runner.os, github.event.number) }}
+    with:
+      app-id: ${{ inputs.client_id }}
+      client-secret: ${{ inputs.client_secret }}
+      tenant-id: ${{ inputs.tenant_id }}
+      name: ${{ env.BUILD_ENV_NAME }}
+      type: Sandbox
+      region: unitedstates
+
+  - name: Test assign-user action with application user
+    uses: ./assign-user
+    with:
+      app-id: ${{ inputs.client_id }}
+      client-secret: ${{ inputs.client_secret }}
+      tenant-id: ${{ inputs.tenant_id }}
+      environment: ${{ steps.create-environment.outputs.environment-url }}
+      user: 82e66a08-8bf9-42bf-883a-7e2d17c7cede
+      role: "System Customizer"
+      application-user: true
+
+  - name: Import solution as unmanaged to build env
+    uses: microsoft/powerplatform-actions/import-solution@latest
+    with:
+      environment-url: ${{ steps.create-environment.outputs.environment-url }}
+      app-id: ${{inputs.client_id}}
+      client-secret: ${{ inputs.client_secret }}
+      tenant-id: ${{inputs.tenant_id}}
+      solution-file: ${{ inputs.solution_outbound_folder}}/${{ inputs.solution_name }}.zip
+      force-overwrite: true
+      publish-changes: true
+
+  - name: Export solution as managed
+    uses: microsoft/powerplatform-actions/export-solution@latest
+    with:
+      environment-url: ${{ inputs.production-environment-url }}
+      app-id: ${{inputs.client_id}}
+      client-secret: ${{ inputs.client_secret }} 
+      tenant-id: ${{inputs.tenant_id}}
+      solution-name: ${{ inputs.solution_name }}
+      managed: true
+      solution-output-file: ${{ inputs.solution_shipping_folder}}/${{ inputs.solution_name }}.zip
+
+  - name: Upload the ready to ship solution to GH artifact store
+    uses: actions/upload-artifact@v2
+    with:
+      name: managedSolutions
+      path: ${{ inputs.solution_shipping_folder}}/${{ inputs.solution_name }}.zip
