@@ -1,4 +1,4 @@
-name: Export, unpack solution, and create PR 
+name: Export, unpack solution, and create a branch 
 
 on:
   workflow_dispatch:
