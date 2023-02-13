@@ -34,9 +34,9 @@ runs:
 
   steps:
 
+  # Currently requires you have the working direcotry set to the correct path...
   - name: Update solution version
     uses: microsoft/powerplatform-actions/update-solution-version@latest
-    working-directory: ${{ inputs.solution_source_folder}}/${{ inputs.solution_name }}/src
     with: 
       strategy: solution
 
